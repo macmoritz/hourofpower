@@ -27,13 +27,25 @@ def calcScore(cards):
     print(f'= {score}')
 
 
-if __name__ == "__main__":
-    with open('input.txt') as f:
+def readFile(filename):
+    with open(filename) as f:
         lines = [line.rstrip() for line in f if line != '\n']
     f.close()
 
     p1 = [int(x) for x in lines[1:getSplitIndex(lines)]]
     p2 = [int(x) for x in lines[getSplitIndex(lines) + 1:]]
+
+    return {
+        'p1': p1,
+        'p2': p2,
+    }
+
+
+if __name__ == "__main__":
+    fileData = readFile('input.txt')
+
+    p1 = fileData['p1']
+    p2 = fileData['p2']
 
     game = 0
     while len(p1) > 0 and len(p2) > 0:
