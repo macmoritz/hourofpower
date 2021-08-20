@@ -1,30 +1,4 @@
-def getSplitIndex(lines):
-    for index, line in enumerate(lines):
-        if line == 'Player 2:':
-            return index
-
-
-def printDecks(p1, p2):
-    print(f'Karten Spieler 1: {p1}')
-    print(f'Karten Spieler 2: {p2}')
-
-
-def placeCards(winner, loser):
-    winner.append(winner[0])
-    winner.append(loser[0])
-    winner.pop(0)
-    loser.pop(0)
-
-
-def calcScore(cards):
-    score = 0
-    output = ''
-    for i in range(len(cards), 0, -1):
-        output += f'\t{cards[len(cards) - i]} *\t{i}'
-        score += cards[len(cards) - i] * i
-        print(output)
-        output = '+'
-    print(f'= {score}')
+import sys 
 
 
 def readFile(filename):
@@ -41,54 +15,97 @@ def readFile(filename):
     }
 
 
-def game(gameCount, p1, p2):
-    round = 0
-    
-    if p1 in p1Decks and p2 in p2Decks:
-        print('Spieler 1 hat gewonnen! Das Deck kam im Spiel schon vor!')
-        return p1
+def getSplitIndex(lines):
+    for index, line in enumerate(lines):
+        if line == 'Player 2:':
+            return index
+
+
+class Game():
+    def __init__(self):
+        self.p1History = []
+        self.p2History = []
+
+    def printDecks(self, p1, p2):
+        print(f'Karten Spieler 1: {p1}')
+        print(f'Karten Spieler 2: {p2}')
+
+    def calcScore(self, cards):
+        score = 0
+        output = ''
+        for i in range(len(cards), 0, -1):
+            output += f'\t{cards[len(cards) - i]} *\t{i}'
+            score += cards[len(cards) - i] * i
+            print(output)
+            output = '+'
+        print(f'= {score}')
+
+
+    def printEnd(self, winner):
+        print('== Kartendeck nach Spiel ==')
+        self.printDecks(p1, p2)
+        print('\n\n')
+        self.calcScore(winner)
+        sys.exit(1)
+
+    def play(self, gameCount, p1, p2):
+        round = 1
         
-    while len(p1) > 0 and len(p2) > 0:
-        round += 1
-        print(f'-- Runde {round} (Spiel {gameCount}) --')
-        printDecks(p1, p2)
-        print(f'Spieler 1 legt: {p1[0]}')
-        print(f'Spieler 2 legt: {p2[0]}')
+        while True:
+            print(f'-- Runde {round} (Spiel {gameCount}) --')
+            self.printDecks(p1, p2)
 
-        if p1[0] == (len(p1) - 1) and p2[0] == (len(p2) - 1):
-            winner = game(gameCount+1, p1[:(p1[0] + 1)], p2[:(p2[0] + 1)])
-        elif p1[0] > p2[0]:
-            print(f'Spieler 1 gewinnt Runde {round} von Spiel 1!\n')
-            winner = p1
-        else:
-            print(f'Spieler 2 gewinnt Runde {round} von Spiel 1!\n')
-            winner = p2
+            if len(p1) < 1:
+                print(f'Spieler 1 hat keine Karten mehr!')
+                return 'p1'
+            elif len(p2) < 1:
+                print(f'Spieler 2 hat keine Karten mehr!')
+                return 'p2'
+            else:
+                print(f'Spieler 1 legt: {p1[0]}')
+                print(f'Spieler 2 legt: {p2[0]}')
+                
+                if p1 in self.p1History and p2 in self.p2History:
+                    print('Spieler 1 hat gewonnen! Das Deck kam im Spiel schon vor!')
+                    sys.exit(1)
+                
+                self.p1History.append(p1[0:])
+                self.p2History.append(p2[0:])
 
-        if winner == p1:
-            placeCards(winner=p1, loser=p2)
-        elif winner == p2:
-            placeCards(winner=p2, loser=p1)
-    
-    p1Decks.append(p1[0:])
-    p2Decks.append(p2[0:])
-    return winner
+                p1i0 = p1[0]
+                p1.pop(0)
+
+                p2i0 = p2[0]
+                p2.pop(0)
+
+                if p1i0 <= len(p1) and p2i0 <= len(p2):
+                    print(f'new p1: {p1[:p1[0]]} new p2: {p2[:p2[0]]}')
+                    sub = Game()
+                    winner = sub.play(gameCount+1, p1[:p1[0]], p2[:p2[0]])
+                    if winner == 'p1':
+                        p1.append(p1i0)
+                        p1.append(p2i0)
+                    elif winner == 'p2':
+                        p2.append(p2i0)
+                        p2.append(p1i0)
+
+                elif p1i0 > p2i0:
+                    print(f'Spieler 1 gewinnt Runde {round} von Spiel {gameCount}!\n')
+                    p1.append(p1i0)
+                    p1.append(p2i0)
+                else:
+                    print(f'Spieler 2 gewinnt Runde {round} von Spiel {gameCount}!\n')
+                    p2.append(p2i0)
+                    p2.append(p1i0)
+                
+                round += 1
 
 
 if __name__ == "__main__":
-    fileData = readFile('input.txt')
+    fileData = readFile('input_example.txt')
 
     p1 = fileData['p1']
     p2 = fileData['p2']
-
-    p1Decks = []
-    p2Decks = []
-
-    while True:        
-        winner = game(1, p1, p2)
-        if len(p1) == 0 or len(p2) == 0:
-            break
     
-    print('== Kartendeck nach Spiel ==')
-    printDecks(p1, p2)
-    print('\n\n')
-    calcScore(winner)
+    game = Game()
+    game.play(1, p1, p2)
