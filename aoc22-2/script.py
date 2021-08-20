@@ -1,6 +1,3 @@
-import sys 
-
-
 def readFile(filename):
     with open(filename) as f:
         lines = [line.strip() for line in f if line != '\n']
@@ -23,12 +20,15 @@ def getSplitIndex(lines):
 
 class Game():
     def __init__(self):
-        self.p1History = []
-        self.p2History = []
+        self.history = []
+        # self.p1History = []
+        # self.p2History = []
+
 
     def printDecks(self, p1, p2):
         print(f'Karten Spieler 1: {p1}')
         print(f'Karten Spieler 2: {p2}')
+
 
     def calcScore(self, cards):
         score = 0
@@ -46,7 +46,7 @@ class Game():
         self.printDecks(p1, p2)
         print('\n\n')
         self.calcScore(winner)
-        sys.exit(1)
+
 
     def play(self, gameCount, p1, p2):
         round = 1
@@ -57,20 +57,24 @@ class Game():
 
             if len(p1) < 1:
                 print(f'Spieler 1 hat keine Karten mehr!')
+                self.printEnd(p2)
                 return 'p1'
             elif len(p2) < 1:
                 print(f'Spieler 2 hat keine Karten mehr!')
+                self.printEnd(p1)
                 return 'p2'
             else:
                 print(f'Spieler 1 legt: {p1[0]}')
                 print(f'Spieler 2 legt: {p2[0]}')
                 
-                if p1 in self.p1History and p2 in self.p2History:
+                if (p1 + p2) in self.history:
+                # if p1 in self.p1History and p2 in self.p2History:
                     print('Spieler 1 hat gewonnen! Das Deck kam im Spiel schon vor!')
-                    sys.exit(1)
+                    return 'p1'
                 
-                self.p1History.append(p1[0:])
-                self.p2History.append(p2[0:])
+                self.history.append(p1 + p2)
+                # self.p1History.append(p1[0:])
+                # self.p2History.append(p2[0:])
 
                 p1i0 = p1[0]
                 p1.pop(0)
@@ -79,9 +83,8 @@ class Game():
                 p2.pop(0)
 
                 if p1i0 <= len(p1) and p2i0 <= len(p2):
-                    print(f'new p1: {p1[:p1[0]]} new p2: {p2[:p2[0]]}')
                     sub = Game()
-                    winner = sub.play(gameCount+1, p1[:p1[0]], p2[:p2[0]])
+                    winner = sub.play(gameCount+1, p1[:p1i0], p2[:p2i0])
                     if winner == 'p1':
                         p1.append(p1i0)
                         p1.append(p2i0)
@@ -102,7 +105,7 @@ class Game():
 
 
 if __name__ == "__main__":
-    fileData = readFile('input_example.txt')
+    fileData = readFile('input.txt')
 
     p1 = fileData['p1']
     p2 = fileData['p2']
