@@ -58,21 +58,21 @@ class Game():
             if len(p1) < 1:
                 print(f'Spieler 1 hat keine Karten mehr!')
                 self.printEnd(p2)
-                return 'p1'
+                return 'p2'
             elif len(p2) < 1:
                 print(f'Spieler 2 hat keine Karten mehr!')
                 self.printEnd(p1)
-                return 'p2'
+                return 'p1'
             else:
                 print(f'Spieler 1 legt: {p1[0]}')
                 print(f'Spieler 2 legt: {p2[0]}')
                 
-                if (p1 + p2) in self.history:
+                if (str(p1) + str(p2)) in self.history:
                 # if p1 in self.p1History and p2 in self.p2History:
                     print('Spieler 1 hat gewonnen! Das Deck kam im Spiel schon vor!')
                     return 'p1'
                 
-                self.history.append(p1 + p2)
+                self.history.append(str(p1) + str(p2))
                 # self.p1History.append(p1[0:])
                 # self.p2History.append(p2[0:])
 
