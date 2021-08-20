@@ -29,7 +29,7 @@ def calcScore(cards):
 
 def readFile(filename):
     with open(filename) as f:
-        lines = [line.rstrip() for line in f if line != '\n']
+        lines = [line.strip() for line in f if line != '\n']
     f.close()
 
     p1 = [int(x) for x in lines[1:getSplitIndex(lines)]]
