@@ -7,12 +7,13 @@ start = time.time()
 puzzle = [6, 8, 5, 9, 7, 4, 2, 1, 3]
 cups = array.array('i', puzzle)
 
+
+for i in range(max(cups) + 1, 1_000_001):
+    cups.append(i)
+
 cupsMin = min(cups)
 cupsMax = max(cups)
 cupsLen = len(cups)
-
-for i in range(cupsMax + 1, 1_000_001):
-    cups.append(i)
 
 end = time.time()
 print(f'creating the puzzle input took {end - start} seconds')
