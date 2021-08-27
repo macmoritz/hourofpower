@@ -14,7 +14,9 @@ fn main() {
     let mut result: (Vec<u32>, u32);
 
     for _i in 0..10000000 {
-        // println!("-- move {} --", _i + 1);
+        if _i % 1000 == 0 {
+            println!("-- move {} --", _i + 1);
+        }
         result = make_move(cups, cups_min, cups_max, cups_len, next_cup_index);
         cups = result.0;
         next_cup_index = result.1;
@@ -24,7 +26,10 @@ fn main() {
     // println!("cups {:?}", cups);
 
     let cup_one_index = cups.iter().position(|&r| r == 1).unwrap() as usize;
-    println!("next two labels on the cups after cup 1: {} * {} = {}", cups[cup_one_index + 1], cups[cup_one_index + 2], cups[cup_one_index + 1] * cups[cup_one_index + 2]);
+    let cup_one_index_next = cups[cup_one_index + 1];
+    let cup_one_index_next_next = cups[cup_one_index + 2];
+    let sum = cup_one_index_next * cup_one_index_next_next; 
+    println!("next two labels on the cups after cup 1: {} * {} = {}", cup_one_index_next, cup_one_index_next_next, sum);
 }
 
 
