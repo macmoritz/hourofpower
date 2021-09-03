@@ -1,7 +1,3 @@
-from copy import deepcopy
-import array
-
-
 moves = {
     'e': (1, 0),
     'w': (-1, 0),
@@ -56,7 +52,7 @@ if __name__ == '__main__':
             blackTiles.add(tile[0:])
 
     for day in range(100):
-        copy = deepcopy(blackTiles)
+        copy = blackTiles.copy()
 
         for i in range(0, size * 2):
             for j in range(0, size * 2):
