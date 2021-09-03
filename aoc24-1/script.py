@@ -21,10 +21,10 @@ def readFile(filename):
 if __name__ == '__main__':
     fileData = readFile('input.txt')
 
-    size = max([len(line) for line in fileData])
+    size = max([len(line) for line in fileData]) * 2
 
     for path in fileData:
-        tile = [size * 2, size * 2]
+        tile = [size, size]
         while path:
             if path[0] in moves:
                 move = moves.get(path[0])
@@ -39,5 +39,4 @@ if __name__ == '__main__':
             touchedTiles.remove(tile)
         else:
             touchedTiles.append(tile[0:])
-    print(touchedTiles)
     print(f'-- {len(touchedTiles)} tiles flipped --')
