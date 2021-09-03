@@ -3,15 +3,15 @@ import array
 
 
 moves = {
-    'e': [1, 0],
-    'w': [-1, 0],
-    'ne': [1, -1],
-    'nw': [0, -1],
-    'se': [0, 1],
-    'sw': [-1, 1],
+    'e': (1, 0),
+    'w': (-1, 0),
+    'ne': (1, -1),
+    'nw': (0, -1),
+    'se': (0, 1),
+    'sw': (-1, 1),
 }
 
-blackTiles = []
+blackTiles = set()
 
 
 def readFile(filename):
@@ -25,19 +25,19 @@ def readFile(filename):
 def getBlackAdjacentCount(tile):
     count = 0
     for move in moves.values():
-        neighbour = [tile[0] + move[0], tile[1] + move[1]]
+        neighbour = (tile[0] + move[0], tile[1] + move[1])
         if neighbour in blackTiles:
             count += 1
     return count
 
 
 if __name__ == '__main__':
-    fileData = readFile('./aoc24/input.txt')
+    fileData = readFile('./input.txt')
 
     size = max([len(line) for line in fileData]) * 2
 
     for path in fileData:
-        tile = array.array('i', [size, size]).tolist()
+        x, y, tile = 0, 0, ()
         while path:
             if path[0] in moves:
                 move = moves.get(path[0])
@@ -45,20 +45,22 @@ if __name__ == '__main__':
             elif path[0:2] in moves:
                 move = moves.get(path[0:2])
                 path = path[2:]
-            tile[0] += move[0]
-            tile[1] += move[1]
+            x += move[0]
+            y += move[1]
+
+        tile = (size + x, size + y)
 
         if tile in blackTiles:
             blackTiles.remove(tile)
         else:
-            blackTiles.append(tile[0:])
+            blackTiles.add(tile[0:])
 
     for day in range(100):
         copy = deepcopy(blackTiles)
 
         for i in range(0, size * 2):
             for j in range(0, size * 2):
-                currentTile = array.array('i', [i, j]).tolist()
+                currentTile = (i, j)
                 blackNeighboursCount = getBlackAdjacentCount(currentTile)
 
                 if currentTile in blackTiles:
@@ -66,7 +68,7 @@ if __name__ == '__main__':
                         copy.remove(currentTile)
                 else:
                     if blackNeighboursCount == 2:
-                        copy.append(currentTile[0:])
+                        copy.add(currentTile[0:])
 
         blackTiles = copy
         print(f'Day {day+1}: {len(blackTiles)}')

@@ -1,13 +1,13 @@
 moves = {
-    'e': [1, 0],
-    'w': [-1, 0],
-    'ne': [1, -1],
-    'nw': [0, -1],
-    'se': [0, 1],
-    'sw': [-1, 1],
+    'e': (1, 0),
+    'w': (-1, 0),
+    'ne': (1, -1),
+    'nw': (0, -1),
+    'se': (0, 1),
+    'sw': (-1, 1),
 }
 
-touchedTiles = []
+touchedTiles = set()
 
 
 def readFile(filename):
@@ -22,9 +22,8 @@ if __name__ == '__main__':
     fileData = readFile('input.txt')
 
     size = max([len(line) for line in fileData]) * 2
-
     for path in fileData:
-        tile = [size, size]
+        x, y, tile = 0, 0, ()
         while path:
             if path[0] in moves:
                 move = moves.get(path[0])
@@ -32,11 +31,15 @@ if __name__ == '__main__':
             elif path[0:2] in moves:
                 move = moves.get(path[0:2])
                 path = path[2:]
-            tile[0] += move[0]
-            tile[1] += move[1]
+
+            x += move[0]
+            y += move[1]
+
+        tile = (size + x, size + y)
 
         if tile in touchedTiles:
             touchedTiles.remove(tile)
         else:
-            touchedTiles.append(tile[0:])
+            touchedTiles.add(tile)
+
     print(f'-- {len(touchedTiles)} tiles flipped --')
