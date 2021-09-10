@@ -38,7 +38,7 @@ def getBlackAdjacentCount(tile):
 if __name__ == '__main__':
     fileData = readFile('./input.txt')
 
-    middle = max([len(line) for line in fileData]) + 25
+    middle = 65
     size = int(middle * 2)
 
     for path in fileData:
