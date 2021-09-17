@@ -1,22 +1,35 @@
 class Developer():
-    def __init__(self, name, languages):
+    def __init__(self, name, languages, resultword):
         self.name = name
         self.languages = set(languages)
+        self.resultword = resultword
+        self.map = None
+        self.usedLetters = set(''.join(self.languages)) | set(self.resultword)
 
     def __str__(self):
         return self.name
 
-    def checkLetterCount(self, resultword):
-        languagesLetters = set(''.join(self.languages))
-        resultwordLetters = set(resultword)
-        letters = languagesLetters | resultwordLetters
-        if len(letters) > 10:
+    def checkLetterCount(self):
+        if len(self.usedLetters) > 10:
             return True
         return False
 
-    def getFirstLetters(self, resultword):
-        firstLetters = ""
-        firstLetters += resultword[0]
+    def getFirstLetters(self):
+        firstLetters = ''
+        firstLetters += self.resultword[0]
         for language in self.languages:
             firstLetters += language[0]
         return ''.join(set(firstLetters))
+    
+    def getMappedNumFromStr(self, string):
+        num = ''
+        for letter in string:
+            num += str(self.map.index(letter))
+        # print(self.map, self.resultword, num)
+        return int(num) 
+
+    def applyMap(self):
+        resultwordInt = self.getMappedNumFromStr(self.resultword)
+        languagesInt = [self.getMappedNumFromStr(language) for language in self.languages]
+        if sum(languagesInt) == resultwordInt:
+            return True
