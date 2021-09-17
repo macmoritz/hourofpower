@@ -87,13 +87,13 @@ if __name__ == '__main__':
         else:
             blackTiles.add(tile[0:])
 
-    for day in range(100):
+    for day in range(10000):
         copy = blackTiles.copy()
 
         threads = []
 
-        for t in range(0, 12):
-            row = int(size / 12)
+        for t in range(0, 4):
+            row = int(size / 4)
             thread = ThreadWithReturnValue(target=do_moves, args=(copy, row * t, row, size))
             thread.start()
             threads.append(thread)
