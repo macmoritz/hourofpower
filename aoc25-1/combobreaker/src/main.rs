@@ -25,7 +25,7 @@ fn main() {
 
     let mut file = File::open(&args[1]).unwrap();
     let mut content = String::new();
-    file.read_to_string(&mut content);
+    file.read_to_string(&mut content).expect("could not read file");
     let split_lines: Vec<&str> = content.trim().split("\n").collect();
 
     let door_public_key: u64 = split_lines[0].parse().unwrap();
