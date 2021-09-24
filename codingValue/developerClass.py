@@ -4,7 +4,10 @@ class Developer():
         self.languages = set(languages)
         self.resultword = resultword
         self.map = None
-        self.usedLetters = set(''.join(self.languages)) | set(self.resultword)
+
+        self.usedLetters = list(set(''.join(self.languages)) | set(self.resultword))
+        while len(self.usedLetters) < 10:
+            self.usedLetters.append(['x', 'y', 'z'][len(self.usedLetters) % 3])
         self.CV = None
 
     def __str__(self):
@@ -25,7 +28,7 @@ class Developer():
     def getMappedNumFromStr(self, string):
         num = ''
         for letter in string:
-            num += str(self.map.index(letter))
+            num += str(self.map.index(letter) % 10)
         return int(num)
 
     def isCorrectMap(self):

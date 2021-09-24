@@ -4,6 +4,7 @@ from developerClass import Developer
 
 
 resultWord = 'CODING'
+allUsedLetters = list(resultWord)
 developers = []
 invalidResponses = []
 
@@ -22,14 +23,18 @@ if __name__ == '__main__':
         name = line.split(':')[0]
         languages = line.split(':')[1].split(',')
         developers.append(Developer(name, languages, resultWord))
+        # dev = developers[-1]
 
     for dev in developers:
+        allUsedLetters = list(set(allUsedLetters) | set(dev.usedLetters))
         if dev.toManyLetters():
             invalidResponses.append((dev, f'{dev} is using too many (>10) letters!'))
             developers.remove(dev)
-        else:
+
+    allCombinations = set(itertools.permutations(list(allUsedLetters)))
+    for comb in allCombinations:
+        for dev in developers:
             print(f'calculating cv for {str(dev)}')
-            allCombinations = set(itertools.permutations(dev.usedLetters))
             for comb in allCombinations:
                 dev.map = comb
                 if comb[0] not in dev.getFirstLetters():
@@ -43,6 +48,5 @@ if __name__ == '__main__':
                 developers.remove(dev)
         print('\n')
 
-    solutionDevelopers = [dev for dev in developers if dev not in invalidResponses]  # and dev.CV is not None]
-    print(f'1) Which software developer has the best CV?\n\tThe best CV has {max(solutionDevelopers, key=lambda x: x.CV)}\n')
+    print(f'1) Which software developer has the best CV?\n\tThe best CV has {max(developers, key=lambda x: x.CV)}\n')
     print(f'2) Which two responses are invalid (and why)?\n\tThe developers {invalidResponses} gave invalid responses!')
