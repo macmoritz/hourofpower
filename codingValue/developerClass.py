@@ -1,3 +1,6 @@
+import itertools
+
+
 class Developer():
     def __init__(self, name, languages, resultword):
         self.name = name
@@ -37,3 +40,17 @@ class Developer():
         if sum(languagesInt) == resultwordInt:
             return resultwordInt
         return False
+
+    def calculateCV(self):
+        print(f'{self.name} gets calculated')
+        allCombinations = set(itertools.permutations(self.usedLetters))
+        for comb in allCombinations:
+            self.map = comb
+            if comb[0] not in self.getFirstLetters():
+                resultInt = self.isCorrectMap()
+                if resultInt:
+                    self.CV = resultInt
+                    # print(f'{self.name} has a solution, the CV is {resultInt}!')
+                    break
+                # if self.CV is None:
+                    # invalidResponses.append((self, f'{self} has no possible solution {self.CV}!'))
