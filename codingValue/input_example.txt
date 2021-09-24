@@ -1,0 +1,3 @@
+Lode Runner:ALGOL,LOGO,CPP,ADA
+Othello:C,ALGOL,LOGO,CPP
+Jumping Jack:ALGOL,APL,ADA,LOGO

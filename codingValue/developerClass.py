@@ -5,11 +5,12 @@ class Developer():
         self.resultword = resultword
         self.map = None
         self.usedLetters = set(''.join(self.languages)) | set(self.resultword)
+        self.CV = None
 
     def __str__(self):
         return self.name
 
-    def checkLetterCount(self):
+    def toManyLetters(self):
         if len(self.usedLetters) > 10:
             return True
         return False
@@ -20,16 +21,16 @@ class Developer():
         for language in self.languages:
             firstLetters += language[0]
         return ''.join(set(firstLetters))
-    
+
     def getMappedNumFromStr(self, string):
         num = ''
         for letter in string:
             num += str(self.map.index(letter))
-        # print(self.map, self.resultword, num)
-        return int(num) 
+        return int(num)
 
-    def applyMap(self):
+    def isCorrectMap(self):
         resultwordInt = self.getMappedNumFromStr(self.resultword)
         languagesInt = [self.getMappedNumFromStr(language) for language in self.languages]
         if sum(languagesInt) == resultwordInt:
-            return True
+            return resultwordInt
+        return False
