@@ -1,18 +1,9 @@
-def readFile(filename):
-    with open(filename) as file:
-        lines = [line.strip() for line in file]
-    file.close()
+valid1 = 0
+valid2 = 0
 
-    return lines
-
-
-if __name__ == '__main__':
-    fileData = readFile('input.txt')
-
-    valid1 = 0
-    valid2 = 0
-
-    for line in fileData:
+with open('input.txt') as file:
+    for line in file:
+        line = line.strip()
         rule = line.split(':')[0]
         passwd = line.split(':')[1].strip()
         letter = rule[-1]
@@ -25,5 +16,5 @@ if __name__ == '__main__':
         if (passwd[low - 1] == letter) ^ (passwd[high - 1] == letter):
             valid2 += 1
 
-    print(f'part1: {valid1} passwords are valid')
-    print(f'part2: {valid2} passwords are valid')
+print(f'part1: {valid1} passwords are valid')
+print(f'part2: {valid2} passwords are valid')
