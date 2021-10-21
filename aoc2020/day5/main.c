@@ -51,9 +51,12 @@ int main() {
     fclose(file);
     printf("part1: %d is the highest seat ID!\n", max_seat_ID);
 
-    for(int i = 1; i < 1022; i++) {
+    for(int i = 1022; i > 1; i--) {
         if(seat_status[i - 1] && !seat_status[i] && seat_status[i + 1]) {
-            printf("part2: seat ID %d is missing\n", i);
+            if(i < max_seat_ID) { 
+                printf("part2: seat ID %d is missing\n", i);
+                break;
+            }
         }
     }
     return 0;
