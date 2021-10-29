@@ -1,8 +1,7 @@
 #include <stdbool.h>
 #include <stdio.h>
 
-#define slice_count 15
-
+#define slice_count 3
 
 void moveDisk(int disk, int from[], int to[]) {
     bool set = false;
@@ -43,6 +42,7 @@ int main(int argc, char **argv) {
         a[i] = i + 1;
     }
 
+    printf("%d moves needed\n\n", (1<<slice_count) - 1);
     printTowers(a, b, c);
     moveTower(slice_count, a, c, b);
     printf("\n");
