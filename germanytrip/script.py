@@ -1,5 +1,3 @@
-from itertools import permutations
-
 directions = [
     [1, -2],
     [2, -1],
@@ -7,7 +5,7 @@ directions = [
     [2, 1], 
     [-1, 2],
     [-2, 1],
-    [-1, -2], 
+    [-1, -2],
     [-2, -1],
 ]
 
@@ -19,37 +17,70 @@ map = [
     ["Trier", "Stuttgart", "Karlsruhe", "Augsburg", "München"],
 ]
 
-cityNames = ["Erfurt", "Bremen", "Münster", "Essen", "Bonn", "Trier", "Hamburg", "Bielefeld", "Kassel", "Frankfurt", "Stuttgart", "Kiel", "Hannover", "Würzburg", "Karlsruhe", "Lübeck", "Magdeburg", "Leipzig", "Nürnberg", "Augsburg", "Rostock", "Berlin", "Dresden", "Bayreuth", "München"]
-cityObj = []
+citys = ["Bremen", "Hamburg", "Kiel", "Lübeck",	"Rostock", "Münster", "Bielefeld", "Hannover", "Magdeburg", "Berlin", "Essen", "Kassel", "Erfurt", "Leipzig", "Dresden", "Bonn", "Frankfurt", "Würzburg", "Nürnberg", "Bayreuth", "Trier", "Stuttgart", "Karlsruhe", "Augsburg", "München"],
 
-start = "Erfurt"
+trips = []
 
 
 class City():
     def __init__(self, name):
         self.name = name
-        self.neighbours = []
         self.row, self.col = -1, -1
         for i, row in enumerate(map):
             if self.name in row:
                 self.row = i
                 self.col = row.index(self.name)
-        self.findNeighbours()
 
-    def findNeighbours(self):
+    def getNeighbours(self, used):
+        neighbours = []
+        print(f'{self.name} not in {[u.name for u in used]} {self.name not in [u.name for u in used]}')
         for direction in directions:
             neighbourRow = self.row + direction[0]
             neighbourCol = self.col + direction[1]
 
-            if neighbourCol > 0 and neighbourCol <= 4 and neighbourRow > 0 and neighbourRow <= 4:
-                self.neighbours.append(map[neighbourRow][neighbourCol])
+            if neighbourCol >= 0 and neighbourCol <= 4 and neighbourRow >= 0 and neighbourRow <= 4:
+                print(map[neighbourRow][neighbourCol])
+                if map[neighbourRow][neighbourCol] not in [u.name for u in used]:
+                    neighbours.append(map[neighbourRow][neighbourCol])
+        return neighbours
+    
+    def __str__(self) -> str:
+        return self.name
 
 
-for cn in cityNames:
-    cityObj.append(City(cn))
+class Trip():
+    def __init__(self, next: City, previous=None):
+        self.stops = []
+        if previous is not None:
+            self.stops = previous.stops
+        if next is not None:
+            self.stops.append(next)
 
-for tour in permutations(range(1, 25)):
-    for stop in tour:
-        city = cityObj[stop - 1]
-        # if cityNames[stop] in cityObj[stop - 1]:
 
+def generateTrip(trip: Trip):
+    global trips
+    if len(trip.stops[-1].getNeighbours(trip.stops)) == 0:
+        if len(trip.stops) == 25:
+            trips.append(trip)
+            print('found solution')
+    else:
+        for neighbour in trip.stops[-1].getNeighbours(trip.stops):
+            generateTrip(Trip(City(neighbour), trip))
+
+# Aufgabe 1
+generateTrip(Trip(City("Erfurt")))
+# print(City("Erfurt").getNeighbours([City("Bonn"), City("Stuttgart"), City('Bayreuth'), City('Augsburg'), City('Berlin'), City('Lübeck'), City('Münster'), City('Hamburg')]))
+
+# Aufgabe 2 
+# for row in map:
+#     for city in row:
+#         generateTrip(Trip(City(city)))
+#         print(f'Augabe 2: {len(trips)}')
+
+# Aufgabe 3, braucht Aufgabe 2
+# for trip in trips:
+#     if trip[0] in citys:
+#         citys.remove(trip[0])
+#     if trip[-1] in citys:
+#         citys.remove(trip[-1])
+# print(f'Aufgabe 3:\n\t{citys}')
