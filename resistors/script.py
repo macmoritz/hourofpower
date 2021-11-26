@@ -1,8 +1,11 @@
 import re
 
 with open('test.txt') as file:
+# with open('w.txt') as file:
     for line in file:
         line = line.strip().split('=')
-        formula = re.sub(r'<([0-9]+)/([0-9]+)>', r'1/(1/\1+1/\2)', line[1]).replace('<', '(').replace('>', ')').replace('-', '+')
-        print(f'{line[0]}\t=\t{eval(formula)}\t≈\t{int(round(eval(formula), -1))}')
-
+        formula = line[1]
+        while any(symbol in formula for symbol in ['<', '<', '(', ')', '-', '+', '/']):
+            formula = eval(re.sub(r'<(([0-9]*>))/([0-9]*)>', r'1/(1/\1+1/\2)', str(formula)).replace('<', '(').replace('>', ')').replace('-', '+'))
+        print(line[0], formula)
+        print(f'{line[0]}\t=\t{formula}\t≈\t{int(round(formula, -1))}')
