@@ -20,12 +20,17 @@ class Router {
 		map[this.pos.x][this.pos.y] = this;
 		this.rays = this.generateRays();
 		this.show_rays = false;
+		this.index = routers.length;
 	}
 
 	show() {
 		fill('#999');
 		rect(this.pos.x * cellSize, this.pos.y * cellSize, cellSize, cellSize);
 		image(routerimg, this.pos.x * cellSize + 20, this.pos.y * cellSize + 20, 60, 60);
+		fill(0);
+		textSize(18);
+		textStyle(BOLD);
+		text(this.index, this.pos.x * cellSize + 80, this.pos.y * cellSize + 90);
 	}
 
 	generateRays() {
