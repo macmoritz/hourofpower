@@ -17,8 +17,9 @@ function preload() {
 class Router {
 	constructor(x, y) {
 		this.pos = createVector(x, y);
-		map[this.pos.x][this.pos.y] = 'router';
+		map[this.pos.x][this.pos.y] = this;
 		this.rays = this.generateRays();
+		this.show_rays = false;
 	}
 
 	show() {
@@ -60,28 +61,56 @@ class Router {
         }
 
 		for (const ray of rays) {
-			map[ray.x][ray.y] = 'ray';
+			if (map[ray.x][ray.y] instanceof Ray) {
+				map[ray.x][ray.y].routers.push(this);
+			} else {
+				map[ray.x][ray.y] = new Ray(this, ray.x, ray.y);
+			}
 		}
 
 		return rays;
 	}
 }
 
+class Ray {
+	constructor(router, x, y) {
+		this.routers = [router];
+		this.pos = createVector(x, y);
+	}
+
+	show() {
+		fill('#ddd');
+		for (const router of this.routers) {
+			if (router.show_rays) {
+				console.log(router);
+				fill('#cc0');
+				break;
+			} else {
+				fill('#ddd');
+			}
+		}
+		rect(this.pos.x * cellSize, this.pos.y * cellSize, cellSize, cellSize);
+	}
+}
+
 function addRouters(index) {
-	if(index == 7) {
+	if (index == 7) {
 		console.log("found solution");
 		return;
 	}
+	if (index >= routers.length) {
+		routers.push(new Router(0, 0));
+		map[0][0] = new Router(0, 0);
+	}
 
-	if(index >= routers.length) routers.push(new Router(0, 0));
 	this.router = routers[index];
 
 	for (let i = this.router.pos.x; i < 8; i++) {
-		if (!map[i].includes('router')) {
+		if (!map[i].includes(Router)) {
 			for (let j = this.router.pos.y; j < 8; j++) {
-				if (map[i][j] != 'router' && map[i][j] != 'ray') {
-					// console.log(i + " " + j);
+				if (!(map[i][j] instanceof Router) && !(map[i][j] instanceof Ray)) {
 					routers.push(new Router(i, j));
+					map[i][j] = new Router(i, j);
 					index += 1;
 					addRouters(index);
 					return;
@@ -89,11 +118,13 @@ function addRouters(index) {
 			}
 		}
 	}
+
 	if (index <= 0) {
 		console.log('no solution');
 		return;
 	}
 	index -= 1;
+	// routers.pop();
 	addRouters(index);
 }
 
@@ -108,7 +139,17 @@ function setup() {
 		line(i, 0, i, width);
 		line(0, i, width, i);
 	}
-	checkbox = createCheckbox('show all rays', true);
+
+	checkbox = createCheckbox('show all rays', false);
+	checkbox.changed(() => {
+		for (const row of map) {
+			for (const field of row) {
+				if (field instanceof Router) {
+					field.show_rays = checkbox.checked();
+				}
+			}
+		}
+	});
 
 	// routers.push(new Router(5, 3));
 	// routers.push(new Router(3, 3));
@@ -119,16 +160,29 @@ function setup() {
 }
 
 function draw() {
-    for (const [x, row] of map.entries()) {
-        for (const [y, field] of row.entries()) {
-            if (field === 'ray') {
-                checkbox.checked() ? fill('#cc0') : fill('#ddd');
-                rect(x * cellSize, y * cellSize, cellSize, cellSize);
+    for (const row of map) {
+        for (const field of row) {
+            if (field instanceof Ray) {
+				field.show();
 			}
 		}
 	}
+	for (const row of map) {
+        for (const field of row) {
+            if (field instanceof Router) {
+				field.show();
+			}
+		}
+	}
+}
 
-	for (const router of routers) {
-		router.show();
+function mouseClicked(event) {
+	this.x = int((event.clientX - 8) / cellSize);
+	this.y = int((event.clientY - 8) / cellSize);
+	if (0 < this.x && this.x < 8 && 0 < this.y && this.y < 8) {
+		field = map[this.x][this.y]
+		if (field instanceof Router) {
+			field.show_rays = !field.show_rays;
+		}
 	}
 }
