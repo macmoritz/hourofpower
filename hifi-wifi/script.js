@@ -8,7 +8,7 @@ let map = [
 	[null, null, null, null, null, null, null, null],
 	[null, null, null, null, null, null, null, null],
 	[null, null, null, null, null, null, null, null],
-]; // null, router, ray
+];
 
 function preload() {
 	routerimg = loadImage('router.svg');
@@ -99,7 +99,6 @@ class Ray {
 
 function addRouters(index) {
 	if (index == 7) {
-		// console.log("found solution");
 		return;
 	}
 	if (index >= routers.length) {
@@ -124,7 +123,6 @@ function addRouters(index) {
 	}
 
 	if (index <= 0) {
-		// console.log('no solution');
 		return;
 	}
 	index -= 1;
@@ -155,11 +153,6 @@ function setup() {
 		}
 	});
 
-	// routers.push(new Router(5, 3));
-	// routers.push(new Router(3, 3));
-    // routers.push(new Router(0, 0));
-    // routers.push(new Router(0, 7));
-    // routers.push(new Router(2, 7));
 	addRouters(0);
 }
 
