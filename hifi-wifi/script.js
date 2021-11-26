@@ -82,7 +82,6 @@ class Ray {
 		fill('#ddd');
 		for (const router of this.routers) {
 			if (router.show_rays) {
-				console.log(router);
 				fill('#cc0');
 				break;
 			} else {
@@ -95,7 +94,7 @@ class Ray {
 
 function addRouters(index) {
 	if (index == 7) {
-		console.log("found solution");
+		// console.log("found solution");
 		return;
 	}
 	if (index >= routers.length) {
@@ -120,7 +119,7 @@ function addRouters(index) {
 	}
 
 	if (index <= 0) {
-		console.log('no solution');
+		// console.log('no solution');
 		return;
 	}
 	index -= 1;
@@ -179,7 +178,7 @@ function draw() {
 function mouseClicked(event) {
 	this.x = int((event.clientX - 8) / cellSize);
 	this.y = int((event.clientY - 8) / cellSize);
-	if (0 < this.x && this.x < 8 && 0 < this.y && this.y < 8) {
+	if (0 <= this.x && this.x < 8 && 0 <= this.y && this.y < 8) {
 		field = map[this.x][this.y]
 		if (field instanceof Router) {
 			field.show_rays = !field.show_rays;
