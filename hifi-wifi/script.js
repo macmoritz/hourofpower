@@ -17,9 +17,9 @@ function preload() {
 class Router {
 	constructor(x, y) {
 		this.pos = createVector(x, y);
-		map[this.pos.x][this.pos.y] = this;
 		this.rays = this.generateRays();
-		this.show_rays = false;
+		map[this.pos.x][this.pos.y] = this;
+		this.show_rays = true;
 		this.index = routers.length;
 	}
 
@@ -49,21 +49,42 @@ class Router {
 			if (this.posD1.x - this.posD1.y == this.pos.x - this.pos.y) {
 				rays.push(createVector(this.posD1.x, this.posD1.y));
 			}
+		}
 
-			this.posD2.x = (this.posD2.x + 1) % 8
-			this.posD2.y = (this.posD2.y - 1) % 8
+		let diagonalCount = this.pos.x + this.pos.y
+		if (diagonalCount > 7) {
+			diagonalCount = 7 - (diagonalCount % 7);
+		}
+		if (diagonalCount % 2 != 0) {
+			rays.push(createVector(this.posD2.y, this.posD2.x));
+		}
 
-			if(!(this.pos.x === 0 && this.pos.y === 0) && !(this.pos.x === 7 && this.pos.y === 7)) {
-				if (this.posD2.x - this.posD2.y != 0) {
-					if (this.posD2.y < 0) {
-						rays.push(createVector(this.posD2.x, 8 - Math.abs(this.posD2.y)));
-					} else {
-						rays.push(createVector(this.posD2.x, Math.abs(this.posD2.y)));
-					}
+		if (this.pos.x === this.pos.y) {
+			for (let steps = 0; steps < Math.ceil(diagonalCount / 2); steps++) {
+				this.posD2.x = (this.posD2.x + 1) % 8;
+				this.posD2.y = (this.posD2.y - 1) % 8;
+				if (this.posD2.y < 0) {
+					rays.push(createVector(this.posD2.x, 8 + this.posD2.y));
+					rays.push(createVector(8 + this.posD2.y, this.posD2.x));
+				} else {
+					rays.push(createVector(this.posD2.x, this.posD2.y));
+					rays.push(createVector(this.posD2.y, this.posD2.x));
 				}
 			}
+		} else {
+			for (let steps = 0; steps < diagonalCount; steps++) {
+				this.posD2.x = (this.posD2.x + 1) % 8;
+				this.posD2.y = (this.posD2.y - 1) % 8;
+				if (this.posD2.y < 0) {
+					rays.push(createVector(this.posD2.x, 8 + this.posD2.y));
+					rays.push(createVector(8 + this.posD2.y, this.posD2.x));
+				} else {
+					rays.push(createVector(this.posD2.x, this.posD2.y));
+					rays.push(createVector(this.posD2.y, this.posD2.x));
+				}
+			}
+		}
 
-        }
 
 		for (const ray of rays) {
 			if (map[ray.x][ray.y] instanceof Ray) {
@@ -97,10 +118,20 @@ class Ray {
 	}
 }
 
+Array.prototype.includesObject = function (object) {
+	for (const element of this) {
+		if (element instanceof object) return true;
+	}
+	return false;
+}
+
 function addRouters(index) {
+	// index = routers.length;
 	if (index == 7) {
+		console.log('solution found');
 		return;
 	}
+
 	if (index >= routers.length) {
 		routers.push(new Router(0, 0));
 		map[0][0] = new Router(0, 0);
@@ -109,25 +140,23 @@ function addRouters(index) {
 	this.router = routers[index];
 
 	for (let i = this.router.pos.x; i < 8; i++) {
-		if (!map[i].includes(Router)) {
+		if (!map[i].includesObject(Router)) {
 			for (let j = this.router.pos.y; j < 8; j++) {
 				if (!(map[i][j] instanceof Router) && !(map[i][j] instanceof Ray)) {
 					routers.push(new Router(i, j));
 					map[i][j] = new Router(i, j);
-					index += 1;
-					addRouters(index);
+					addRouters(index++);
 					return;
 				}
 			}
 		}
 	}
-
-	if (index <= 0) {
+	if (index == 0) {
 		return;
 	}
-	index -= 1;
 	// routers.pop();
-	addRouters(index);
+	addRouters(index--);
+	return;
 }
 
 function setup() {
@@ -142,7 +171,7 @@ function setup() {
 		line(0, i, width, i);
 	}
 
-	checkbox = createCheckbox('show all rays', false);
+	checkbox = createCheckbox('show all rays', true);
 	checkbox.changed(() => {
 		for (const row of map) {
 			for (const field of row) {
@@ -153,7 +182,16 @@ function setup() {
 		}
 	});
 
+	// map[3][4] = new Router(3, 4);
+	// map[4][3] = new Router(4, 3);
+	// map[4][4] = new Router(4, 4);
+	// map[5][5] = new Router(5, 5);
+	// map[5][2] = new Router(5, 2);
+
 	addRouters(0);
+	for (const router of routers) {
+		map[router.pos.x][router.pos.y] = router;
+	}
 }
 
 function draw() {
